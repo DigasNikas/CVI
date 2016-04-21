@@ -1,11 +1,5 @@
 clear all
 imgg1 = imread('moedas1.jpg');
-imgg2 = imread('moedas2.jpg');
-figure;
-subplot(1,2,1), subimage(imgg1);
-title('Moedas 1');
-subplot(1,2,2), subimage(imgg2);
-title('Moedas 2');
 
 thr = graythresh(imgg1)*255;
 hold on
@@ -14,7 +8,6 @@ bw = rgb2gray(imgg1);
 bw = bw > thr;
 bw = medfilt2(bw);
 bw = imdilate(bw, strel('disk',5));
-figure,imshow(bw)
 
 %contagem de objectos
 [lb num] = bwlabel(bw);
@@ -29,12 +22,15 @@ props = regionprops(bw,'Centroid','Perimeter', 'Area','MajorAxisLength','MinorAx
 % subplot(1,2,1);
 % imagesc(imgg1); colormap gray
 
+imgHandle = figure,imshow(imgg1);
+
 for i = 1 : num
-    figure(11)
-    subplot(1,2,2);
-    imagesc(Acc_poligono); axis off;
-    subplot(1,2,1);
-    viscircle('
-    rectangle('Position', props(i).BoundingBox, 'EdgeColor', 'r', 'linewidth',2); axis off;
+    viscircles(props(i).Centroid, 1);
+    text(props(i).Centroid(1),props(i).Centroid(2),int2str(i), 'Color','red','FontSize',20);
+    props(i).Rad = mean([props(i).MajorAxisLength props(i).MinorAxisLength],2)/2;
+    viscircles(props(i).Centroid, props(i).Rad);
     drawnow
+    
 end
+
+set(imgHandle, 'ButtonDownFcn', @ClickCallBack
