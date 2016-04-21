@@ -7,7 +7,6 @@ title('Moedas 1');
 subplot(1,2,2), subimage(imgg2);
 title('Moedas 2');
 
-figure,imshow(imgg1)
 thr = graythresh(imgg1)*255;
 hold on
 plot(thr, 0,'r*')
@@ -17,29 +16,20 @@ bw = medfilt2(bw);
 bw = imdilate(bw, strel('disk',5));
 figure,imshow(bw)
 
+%contagem de objectos
 [lb num] = bwlabel(bw);
 hold on
-props = regionprops(lb,'Area','ConvexHull','BoundingBox');
+% ---------------------
 
-Acc_poligono = zeros(size(imgg1));
-aux          = zeros(size(imgg1));
-figure(11)
-subplot(1,2,1);
-imagesc(imgg1); colormap gray
+props = regionprops(bw,'Centroid','Perimeter', 'Area','MajorAxisLength','MinorAxisLength');
+
+% Acc_poligono = zeros(size(imgg1));
+% aux          = zeros(size(imgg1));
+% figure(11)
+% subplot(1,2,1);
+% imagesc(imgg1); colormap gray
 
 for i = 1 : num
-    poligono = roipoly(aux,props(i).ConvexHull(:,1), props(i).ConvexHull(:,2));
-    Acc_poligono = Acc_poligono + poligono;
-%     
-%     figure(9),imshow(img)
-%     rectangle('Position', props(i).BoundingBox, 'EdgeColor', 'r', 'linewidth',2);
-%     figure(10);
-%     imagesc(Acc_poligono); axis off;
-    
-    figure(11)
-    subplot(1,2,2);
-    imagesc(Acc_poligono); axis off;
-    subplot(1,2,1);
-    rectangle('Position', props(i).BoundingBox, 'EdgeColor', 'r', 'linewidth',2); axis off;
+    viscircles(props(i).Centroid, 2);
     drawnow
 end
