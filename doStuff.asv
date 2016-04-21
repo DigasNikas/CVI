@@ -36,7 +36,10 @@ end
 
     lineOn=0;
     linhas = zeros(1, num);
-
+    textos = zeros(1, num);
+    rectangles = zeros(1, num);
+    aux = zeros(3, num);
+    circle = 0;
     function ClickCallBack(objectHandle, eventData)
     axesHandle  = get(objectHandle,'Parent');
             coordinates = get(axesHandle,'CurrentPoint'); 
@@ -47,17 +50,35 @@ end
         if res == 1
             if(lineOn==1)
                 delete(linhas);
+                delete(textos);
+                delete(circle);
+                delete(rectangles);
+                delete(aux);
                 linhas = zeros(1, num);
+                textos = zeros(1, num);
+                rectangles = zeros(1, num);
+                aux=zeros(3,num);
             end
+            circle=viscircles(props(i).Centroid, props(i).Rad,'LineStyle','--','edgecolor','green');
+            rectangle('Position', [props(i).Centroid(1),props(i).Centroid(2),100,250],'FaceColor', 'w','Curvature',1, 'linewidth',1);
             for j = 1 : num
                 if(j~=i)
                     direction = props(j).Centroid-props(i).Centroid;
-                    linhas(j) = line([props(i).Centroid(1),props(j).Centroid(1)],[props(i).Centroid(2),props(j).Centroid(2)]);
+                    direction2 = props(i).Centroid-props(j).Centroid;
+                    direction2=((direction2./sqrt((direction2(1).^2) + (direction2(2).^2)))*props(j).Rad)+props(j).Centroid
+                    direction=((direction./sqrt( (direction(1).^2) + (direction(2).^2)))*props(i).Rad)+props(i).Centroid
+                    
+                    linhas(j) = line([direction(1),direction2(1)],[direction(2),direction2(2)]);
+                    
+                    %linhas(j) = line([props(i).Centroid(1),props(j).Centroid(1)],[props(i).Centroid(2),props(j).Centroid(2)]);
                     set(linhas(j),'color',[0 1 0],'Linewidth',2.2);
                     TextX = (props(j).Centroid(1) + props(i).Centroid(1))./2;
                     TextY = (props(j).Centroid(2) + props(i).Centroid(2))./2;
-                    distance = pow(direction(1)
-                    text(TextX,TextY,'lalal', 'Color','red','FontSize',20);
+                    direction=direction-direction2;
+                    distance = sqrt(direction(1).^2 + direction(2).^2);
+                    rectangles(j) = rectangle('Position', [TextX-5,TextY-30,75,20], 'FaceColor', 'w','Curvature',1, 'linewidth',1); axis off;
+                    textos(j)=text(TextX,TextY-20,num2str(distance), 'Color','black','FontSize',10);
+                   
                     pause(1);
                     drawnow
                    
