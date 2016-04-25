@@ -117,7 +117,6 @@ global area centroi perime rad;
 items = get(hObject,'String');
 index_selected = get(hObject,'Value');
 item_selected = items{index_selected};
-display(item_selected);
 str=get(handles.text3,'string');
 if(strcmp(item_selected, 'Area'))
 set(handles.text3,'string',num2str(area));
