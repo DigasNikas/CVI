@@ -22,7 +22,7 @@ function varargout = project(varargin)
 
 % Edit the above text to modify the response to help project
 
-% Last Modified by GUIDE v2.5 25-Apr-2016 20:20:49
+% Last Modified by GUIDE v2.5 28-Apr-2016 12:55:43
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -143,3 +143,26 @@ function popupmenu2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton4.
+function pushbutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+global coin;
+N = 100;
+[nlin ncol dummy] = size(coin);
+npixels = nlin*ncol;
+hr1 = imhist(coin(:,:,1), N)/npixels;
+hg1 = imhist(coin(:,:,2), N)/npixels;
+hb1 = imhist(coin(:,:,3), N)/npixels;
+
+
+axes(handles.axes10);
+bar(hr1);
+axes(handles.axes11);
+bar(hg1);
+axes(handles.axes12);
+bar(hb1);
