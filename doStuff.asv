@@ -1,4 +1,4 @@
-function [coin area centroi perime rad] = doStuff(img)
+function [coin, area, centroi, perime, rad] = doStuff(img)
 
 thr = graythresh(img)*255; % sets the threshold 
 bw = rgb2gray(img); % bw = black&white image
@@ -10,7 +10,7 @@ bw = imdilate(bw, strel('disk',5));
 
 [lb num] = bwlabel(bw); %counts num objects
 % ---------------------
-
+global props;
 props = regionprops(bw,'Centroid','Perimeter','BoundingBox', 'Area','MajorAxisLength','MinorAxisLength');
 
 imgHandle = imshow(img);
@@ -28,13 +28,16 @@ lineOn=0;
 aux = zeros(3, num);
 circle = 0;
 global coin area centroi perime rad;
-
-    function [coin area centroi perime rad] = ClickCallBack(objectHandle, eventData)
+    function [coin, area, centroi, perime, rad] = ClickCallBack(objectHandle, eventData)
+        global coordinates;
         axesHandle  = get(objectHandle,'Parent');
         coordinates = get(axesHandle,'CurrentPoint');
         coordinates = coordinates(1,1:2);
-        global coin area centroi perime rad;
-        
+        [coin, area, centroi, perime, rad] = checkCoin(coordinates, props);
+    end 
+
+    function[coin, area, centroi, perime, rad] = checkCoin(coordinates, props)
+
         for i = 1 : num
             res = (coordinates(1) - props(i).Centroid(1))^2 + (coordinates(2) - props(i).Centroid(2))^2 <= props(i).Rad^2;
             if res == 1
@@ -50,7 +53,7 @@ global coin area centroi perime rad;
                 end
                 
                 coin = imcrop(img,[props(i).Centroid(1)-props(i).Rad props(i).Centroid(2)-props(i).Rad (props(i).Rad)*2 (props(i).Rad)*2]);
-                circle=viscircles(props(i).Centroid, props(i).Rad,'LineStyle','--','edgecolor','green');
+                circle = viscircles(props(i).Centroid, props(i).Rad,'LineStyle','--','edgecolor','green');
                 
                 for j = 1 : num
                     if(j~=i)
@@ -70,7 +73,7 @@ global coin area centroi perime rad;
                         aux(3,j)=text(TextX,TextY-20,int2str(distance), 'Color','black','FontSize',8);
                         
                         pause(1);
-                        drawnow 
+                        drawnow
                     end
                 end
                 lineOn=1;
